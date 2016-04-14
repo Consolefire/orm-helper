@@ -3,9 +3,10 @@
   <groupId>com.consolefire.orm.helper</groupId>
   <artifactId>orm-helper</artifactId>
   <versioning>
+    <release>1.0-FINAL</release>
     <versions>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0-FINAL</version>
     </versions>
-    <lastUpdated>20160414104311</lastUpdated>
+    <lastUpdated>20160414113848</lastUpdated>
   </versioning>
 </metadata>
