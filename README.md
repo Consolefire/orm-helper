@@ -1,7 +1,7 @@
 # orm-helper
 A helper library for ORM layer with Spring and JPA. It also provides auto switch between Master - Slave Datasource
 
-## Usage
+## Usage in Maven
 - Maven repository entry in pom.xml
 ```xml
       <repositories>
@@ -22,6 +22,16 @@ A helper library for ORM layer with Spring and JPA. It also provides auto switch
             <artifactId>orm-helper</artifactId>
             <version>1.0-FINAL</version>
         </dependency>
+```
+
+## Usages in Gradle
+- Add repository url like 
+```
+maven { url "https://raw.github.com/Consolefire/orm-helper/mvn-repo" }
+```
+- Add Dependency 
+```
+compile(group: 'com.consolefire.orm.helper', name: 'orm-helper', version: '1.0-FINAL')
 ```
 
 ## Sample using Maven and Mysql
