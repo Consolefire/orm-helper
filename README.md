@@ -7,7 +7,7 @@ A helper library for ORM layer with Spring and JPA. It also provides auto switch
       <repositories>
         <repository>
             <id>orm-helper-mvn-repo</id>
-            <url>https://raw.github.com/sabuj-das/Consolefire/orm-helper/mvn-repo/</url>
+            <url>https://raw.github.com/Consolefire/orm-helper/mvn-repo/</url>
             <snapshots>
                 <enabled>true</enabled>
                 <updatePolicy>always</updatePolicy>
