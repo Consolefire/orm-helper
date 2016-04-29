@@ -1,6 +1,11 @@
 # orm-helper
 A helper library for ORM layer with Spring and JPA. It also provides auto switch between Master - Slave Datasource
 
+## Versions
+- Final: `1.0-FINAL`
+- Release: `1.2-SNAPSHOT`
+
+
 ## Usage in Maven
 - Maven repository entry in pom.xml
 ```xml

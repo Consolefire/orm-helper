@@ -1,24 +1,42 @@
 package com.consolefire.orm.helper;
 
 
-import com.consolefire.orm.GenericDao;
-import com.consolefire.orm.entity.AuditProperties;
-import com.consolefire.orm.entity.Auditable;
-import com.consolefire.orm.util.ObjectUtil;
-import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.EntityManager;
+import javax.persistence.Id;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
-import java.util.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
+import com.consolefire.orm.GenericDao;
+import com.consolefire.orm.entity.AuditProperties;
+import com.consolefire.orm.entity.Auditable;
+import com.consolefire.orm.util.ObjectUtil;
+
+import lombok.Getter;
 
 
 public abstract class GenericJpaDao<E, I extends Serializable> implements GenericDao<E, I> {
@@ -160,20 +178,42 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
 
     @Override
     public long count() {
-        
-        return 0;
+        CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        criteriaQuery.select(criteriaBuilder.count(criteriaQuery.from(getEntityType())));
+        return getEntityManager().createQuery(criteriaQuery).getSingleResult();
     }
 
     @Override
-    public long count(Map<String, Object> properties) {
-        
-        return 0;
+    public long count(Map<String, Object> parameters) {
+        if (null == parameters || parameters.size() <= 0)
+            return 0;
+        CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<E> entityRoot = criteriaQuery.from(getEntityType());
+        criteriaQuery.select(criteriaBuilder.count(entityRoot));
+        List<String> paramList = new ArrayList<>(parameters.keySet());
+        Predicate[] predicates = new Predicate[paramList.size()];
+        for (int i = 0; i < paramList.size(); i++) {
+            String param = paramList.get(i);
+            Object value = parameters.get(param);
+            if (null != value) {
+                if (value instanceof Collection) {
+                    Predicate predicate = entityRoot.get(param).in(value);
+                    predicates[i] = predicate;
+                } else {
+                    Predicate predicate = criteriaBuilder.equal(entityRoot.get(param), parameters.get(param));
+                    predicates[i] = predicate;
+                }
+            }
+        }
+        criteriaQuery = criteriaQuery.where(predicates);
+        return getEntityManager().createQuery(criteriaQuery).getSingleResult();
     }
 
     @Override
     public E save(E entity) {
         logger.info("Saving entity");
-        prepareAuditProperties(entity, false);
         getEntityManager().persist(entity);
         getEntityManager().flush();
         return entity;
@@ -181,7 +221,6 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
 
     @Override
     public E update(E entity) {
-        prepareAuditProperties(entity, true);
         return getEntityManager().merge(entity);
     }
 
@@ -231,45 +270,4 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
         }
     }
 
-
-    protected void prepareAuditProperties(final E entity, boolean update) {
-        if (null == entity) {
-            return;
-        }
-        Annotation annotation = ObjectUtil.getAnnotation(getEntityType(), Auditable.class, true);
-        if (null != annotation) {
-            AuditProperties auditProperties = null;
-            Auditable auditable = (Auditable) annotation;
-            if (null != auditable) {
-                Method getterMethod = ObjectUtil.getGetterMethod(getEntityType(), auditable.value());
-                try {
-                    auditProperties = (AuditProperties) getterMethod.invoke(entity, null);
-                } catch (Exception e) {
-                    auditProperties = new AuditProperties();
-                }
-            }
-            if (null == auditProperties) {
-                auditProperties = new AuditProperties();
-            }
-            if (!update) {
-                auditProperties.setCreatedAt(new Date());
-                auditProperties.setCreatedBy("APP_USER");
-            } else {
-                auditProperties.setUpdatedBy("APP_USER");
-                auditProperties.setUpdatedAt(new Date());
-            }
-
-            try {
-                Method setterMethod = getEntityType().getMethod(ObjectUtil.createSetterMethod(auditable.value()),
-                        new Class[] {AuditProperties.class});
-                if (null == setterMethod) {
-                    logger.error("Could not set Audit Properties as not set method");
-                }
-                setterMethod.invoke(entity, new Object[] {auditProperties});
-            } catch (Exception e) {
-                logger.error("Could not set Audit Properties");
-                throw new RuntimeException("Could not set Audit Properties");
-            }
-        }
-    }
 }

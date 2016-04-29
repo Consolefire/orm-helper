@@ -1,14 +1,20 @@
 package com.consolefire.orm.config;
 
-import com.consolefire.orm.helper.DataSourceTypeContext;
-import com.consolefire.orm.helper.MasterSlaveRoutingDataSource;
-import lombok.Getter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -24,14 +30,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import com.consolefire.orm.ContextAutowireFactory;
+import com.consolefire.orm.helper.DataSourceTypeContext;
+import com.consolefire.orm.helper.MasterSlaveRoutingDataSource;
+
+import lombok.Getter;
 
 /**
  * Created by sabuj.das on 14/04/16.
@@ -94,7 +97,7 @@ public class OrmHelperPersistenceConfig implements ApplicationContextAware {
     @Qualifier("ormHelper.defaultDataSourceType")
     private DataSourceTypeContext.DataSourceType defaultDataSourceType = DataSourceTypeContext.DataSourceType.MASTER;
 
-    @Resource(name="ormHelper.entityPackagesToScan")
+    @Resource(name = "ormHelper.entityPackagesToScan")
     private List<String> entityPackagesToScan;
 
 
@@ -119,19 +122,16 @@ public class OrmHelperPersistenceConfig implements ApplicationContextAware {
     @Bean
     @Primary
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
-                new LocalContainerEntityManagerFactoryBean();
+        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(applicationContext.getBean(DataSource.class));
         entityManagerFactoryBean.setPersistenceUnitName("ORM_HELPER_MASTER_SLAVE_SWITCH_PERSISTENCE_UNIT");
-        if(null != entityPackagesToScan){
-            entityManagerFactoryBean
-                    .setPackagesToScan(entityPackagesToScan.toArray(new String[]{}));
+        if (null != entityPackagesToScan) {
+            entityManagerFactoryBean.setPackagesToScan(entityPackagesToScan.toArray(new String[] {}));
         }
 
         JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         entityManagerFactoryBean.setJpaVendorAdapter(vendorAdapter);
-        entityManagerFactoryBean.setJpaProperties(jpaProperties
-                .getProperties());
+        entityManagerFactoryBean.setJpaProperties(jpaProperties.getProperties());
         return entityManagerFactoryBean;
     }
 
@@ -147,5 +147,10 @@ public class OrmHelperPersistenceConfig implements ApplicationContextAware {
     @Primary
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    @Bean
+    public ContextAutowireFactory contextAutowireFactory() {
+        return ContextAutowireFactory.getInstance();
     }
 }
