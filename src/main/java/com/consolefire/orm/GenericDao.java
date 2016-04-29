@@ -63,6 +63,10 @@ public interface GenericDao<E, I extends Serializable> {
      */
     Collection<E> findAll(List<I> list);
 
+    Collection<E> findByNamedQuery(String namedQuery, Map<String, Object> parameters);
+    
+    E findUniqueByNamedQuery(String namedQuery, Map<String, Object> parameters);
+    
     /**
      * Count the rows of current entity. it is similar to "select count(*) from T"
      *

@@ -39,8 +39,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
         List<Field> fields = ObjectUtil.getFields(entityType, true);
         if (null != fields && fields.size() > 0) {
             for (Field field : fields) {
-                if (field.isAnnotationPresent(Id.class)
-                        || field.isAnnotationPresent(EmbeddedId.class)) {
+                if (field.isAnnotationPresent(Id.class) || field.isAnnotationPresent(EmbeddedId.class)) {
                     this.identityFieldName = field.getName();
                     break;
                 }
@@ -59,22 +58,19 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @SuppressWarnings("unchecked")
-    protected I getIdValue(E entity) throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    protected I getIdValue(E entity) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
         if (null != entity) {
-            Method idMethod =
-                    entityType.getMethod("get" + StringUtils.capitalize(identityFieldName), null);
+            Method idMethod = entityType.getMethod("get" + StringUtils.capitalize(identityFieldName), null);
             return (I) idMethod.invoke(entity, null);
         }
         return null;
     }
 
-    protected void setIdValue(E entity, I id) throws NoSuchMethodException, SecurityException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    protected void setIdValue(E entity, I id) throws NoSuchMethodException, SecurityException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException {
         if (null != entity) {
-            Method idMethod =
-                    entityType.getMethod("set" + StringUtils.capitalize(identityFieldName),
-                            id.getClass());
+            Method idMethod = entityType.getMethod("set" + StringUtils.capitalize(identityFieldName), id.getClass());
             idMethod.invoke(entity, id);
         }
     }
@@ -101,8 +97,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
                     Predicate predicate = entityRoot.get(param).in(value);
                     predicates[i] = predicate;
                 } else {
-                    Predicate predicate =
-                            criteriaBuilder.equal(entityRoot.get(param), parameters.get(param));
+                    Predicate predicate = criteriaBuilder.equal(entityRoot.get(param), parameters.get(param));
                     predicates[i] = predicate;
                 }
             }
@@ -128,31 +123,50 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
 
     @Override
     public Collection<E> findAll() {
-        return getEntityManager().createQuery("SELECT e FROM " + getEntityType().getName() + " e")
-                .getResultList();
+        return getEntityManager().createQuery("SELECT e FROM " + getEntityType().getName() + " e").getResultList();
     }
 
     @Override
     public Collection<E> findAll(List<I> list) {
         if (null == list || list.size() <= 0)
             return null;
-        Query query =
-                getEntityManager().createQuery(
-                        "SELECT e FROM  " + getEntityType().getName() + " e WHERE e."
-                                + getIdentityFieldName() + " IN (:idList)");
+        Query query = getEntityManager().createQuery("SELECT e FROM  " + getEntityType().getName() + " e WHERE e."
+                + getIdentityFieldName() + " IN (:idList)");
         query.setParameter("idList", list);
         return query.getResultList();
     }
 
     @Override
+    public Collection<E> findByNamedQuery(String namedQuery, Map<String, Object> parameters) {
+        TypedQuery<E> typedQuery = getEntityManager().createNamedQuery(namedQuery, getEntityType());
+        if (null != parameters && parameters.size() > 0) {
+            for (String key : parameters.keySet()) {
+                typedQuery.setParameter(key, parameters.get(key));
+            }
+        }
+        return typedQuery.getResultList();
+    }
+
+    @Override
+    public E findUniqueByNamedQuery(String namedQuery, Map<String, Object> parameters) {
+        TypedQuery<E> typedQuery = getEntityManager().createNamedQuery(namedQuery, getEntityType());
+        if (null != parameters && parameters.size() > 0) {
+            for (String key : parameters.keySet()) {
+                typedQuery.setParameter(key, parameters.get(key));
+            }
+        }
+        return typedQuery.getSingleResult();
+    }
+
+    @Override
     public long count() {
-        // TODO Auto-generated method stub
+        
         return 0;
     }
 
     @Override
     public long count(Map<String, Object> properties) {
-        // TODO Auto-generated method stub
+        
         return 0;
     }
 
@@ -192,17 +206,29 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
 
     @Override
     public int saveOrUpdate(List<E> entities) {
-        return 0;
+        int count = 0;
+        if (null != entities && entities.size() > 0) {
+            for (E e : entities) {
+                saveOrUpdate(e);
+                count++;
+            }
+        }
+        return count;
     }
 
     @Override
     public void delete(I id) {
-
+        E entity = getEntityManager().find(getEntityType(), id);
+        if (null != entity) {
+            delete(entity);
+        }
     }
 
     @Override
     public void delete(E entity) {
-
+        if (null != entity) {
+            entityManager.remove(entity);
+        }
     }
 
 
@@ -215,8 +241,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
             AuditProperties auditProperties = null;
             Auditable auditable = (Auditable) annotation;
             if (null != auditable) {
-                Method getterMethod =
-                        ObjectUtil.getGetterMethod(getEntityType(), auditable.value());
+                Method getterMethod = ObjectUtil.getGetterMethod(getEntityType(), auditable.value());
                 try {
                     auditProperties = (AuditProperties) getterMethod.invoke(entity, null);
                 } catch (Exception e) {
@@ -235,9 +260,8 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
             }
 
             try {
-                Method setterMethod =
-                        getEntityType().getMethod(ObjectUtil.createSetterMethod(auditable.value()),
-                                new Class[] {AuditProperties.class});
+                Method setterMethod = getEntityType().getMethod(ObjectUtil.createSetterMethod(auditable.value()),
+                        new Class[] {AuditProperties.class});
                 if (null == setterMethod) {
                     logger.error("Could not set Audit Properties as not set method");
                 }
