@@ -6,7 +6,6 @@ package com.consolefire.orm;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
 
 /**
  * @author sabuj.das
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
  */
 public final class ContextAutowireFactory implements ApplicationContextAware {
 
-    private static ContextAutowireFactory instance;
+    private static volatile ContextAutowireFactory instance;
     private ApplicationContext applicationContext;
 
     /**
