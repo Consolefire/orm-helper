@@ -1,8 +1,15 @@
 package com.consolefire.orm.helper;
 
 
+import com.consolefire.orm.GenericDao;
+import com.consolefire.orm.timed.TimeTrack;
+import com.consolefire.orm.util.ObjectUtil;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
+
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,7 +17,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +32,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-
-import com.consolefire.orm.GenericDao;
-import com.consolefire.orm.entity.AuditProperties;
-import com.consolefire.orm.entity.Auditable;
-import com.consolefire.orm.util.ObjectUtil;
 
 import lombok.Getter;
 
@@ -75,6 +72,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
         return this.identityFieldName;
     }
 
+
     @SuppressWarnings("unchecked")
     protected I getIdValue(E entity) throws NoSuchMethodException, SecurityException, IllegalAccessException,
             IllegalArgumentException, InvocationTargetException {
@@ -94,11 +92,13 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public E find(I id) {
         return (E) getEntityManager().find(getEntityType(), id);
     }
 
     @Override
+    @TimeTrack
     public Collection<E> find(Map<String, Object> parameters) {
         if (null == parameters || parameters.size() <= 0)
             return null;
@@ -128,6 +128,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public Collection<E> find(Properties properties) {
         if (null != properties) {
             Map<String, Object> parameters = new HashMap<>();
@@ -140,11 +141,13 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public Collection<E> findAll() {
         return getEntityManager().createQuery("SELECT e FROM " + getEntityType().getName() + " e").getResultList();
     }
 
     @Override
+    @TimeTrack
     public Collection<E> findAll(List<I> list) {
         if (null == list || list.size() <= 0)
             return null;
@@ -155,6 +158,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public Collection<E> findByNamedQuery(String namedQuery, Map<String, Object> parameters) {
         TypedQuery<E> typedQuery = getEntityManager().createNamedQuery(namedQuery, getEntityType());
         if (null != parameters && parameters.size() > 0) {
@@ -166,6 +170,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public E findUniqueByNamedQuery(String namedQuery, Map<String, Object> parameters) {
         TypedQuery<E> typedQuery = getEntityManager().createNamedQuery(namedQuery, getEntityType());
         if (null != parameters && parameters.size() > 0) {
@@ -177,6 +182,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public long count() {
         CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
@@ -185,6 +191,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public long count(Map<String, Object> parameters) {
         if (null == parameters || parameters.size() <= 0)
             return 0;
@@ -212,6 +219,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public E save(E entity) {
         logger.info("Saving entity");
         getEntityManager().persist(entity);
@@ -220,6 +228,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public E update(E entity) {
         return getEntityManager().merge(entity);
     }
@@ -227,6 +236,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
 
 
     @Override
+    @TimeTrack
     public E saveOrUpdate(E entity) {
         if (!StringUtils.hasText(getIdentityFieldName())) {
             return getEntityManager().merge(entity);
@@ -244,6 +254,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public int saveOrUpdate(List<E> entities) {
         int count = 0;
         if (null != entities && entities.size() > 0) {
@@ -256,6 +267,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public void delete(I id) {
         E entity = getEntityManager().find(getEntityType(), id);
         if (null != entity) {
@@ -264,6 +276,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
     }
 
     @Override
+    @TimeTrack
     public void delete(E entity) {
         if (null != entity) {
             entityManager.remove(entity);
