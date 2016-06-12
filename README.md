@@ -3,16 +3,17 @@ A helper library for ORM layer with Spring and JPA. It also provides auto switch
 
 ## Versions
 - Final: `1.0-FINAL`
-- Release: `1.3-SNAPSHOT`
+- Release: `1.4-SNAPSHOT`
 
-
-## Usage in Maven
+# Usage
+## Maven
 - Maven repository entry in pom.xml
 ```xml
 <repositories>
     <repository>
         <id>orm-helper-mvn-repo</id>
         <url>https://raw.github.com/Consolefire/orm-helper/mvn-repo/</url>
+        <!-- Optional: to always check the repo to refresh jar --> 
         <snapshots>
             <enabled>true</enabled>
             <updatePolicy>always</updatePolicy>
@@ -25,21 +26,28 @@ A helper library for ORM layer with Spring and JPA. It also provides auto switch
 <dependency>
     <groupId>com.consolefire.orm.helper</groupId>
     <artifactId>orm-helper</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>${orm.helper.version}</version>
 </dependency>
 ```
 
-## Usages in Gradle
+## Gradle
 - Add repository url like 
 ```
 maven { url "https://raw.github.com/Consolefire/orm-helper/mvn-repo" }
 ```
 - Add Dependency 
 ```
-compile(group: 'com.consolefire.orm.helper', name: 'orm-helper', version: '1.0-FINAL')
+compile(group: 'com.consolefire.orm.helper', name: 'orm-helper', version: "${orm.helper.version}")
 ```
 
-## Sample using Maven and Mysql
+# Changes in current version
+## 1.4-SNAPSHOT
+* Added constants for Bean Names used in the Configuration.
+* Modified to have java.util.Properties as  JPA Properties.
+* Added bean to scan Hibernate/ORM mapping files.
+
+
+# Sample using Maven and Mysql
 Complete example is available [here](https://github.com/Consolefire/sample-projects/tree/master/orm-jpa-sample "orm-jpa-sample").
 - Add 2 databases: Master and Slave
 - Insert records in both database
@@ -190,5 +198,4 @@ public class TestConfig {
     }
 }
 ```
-
 

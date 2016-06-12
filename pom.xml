@@ -4,7 +4,7 @@
 
     <groupId>com.consolefire.orm.helper</groupId>
     <artifactId>orm-helper</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.4-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>orm-helper</name>
@@ -100,7 +100,6 @@
             <version>${spring.framework.version}</version>
             <scope>provided</scope>
         </dependency>
-
 
     </dependencies>
 
