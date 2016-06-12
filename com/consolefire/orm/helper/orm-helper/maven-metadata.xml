@@ -4,8 +4,8 @@
   <artifactId>orm-helper</artifactId>
   <versioning>
     <versions>
-      <version>1.4-SNAPSHOT</version>
+      <version>1.5-SNAPSHOT</version>
     </versions>
-    <lastUpdated>20160612024128</lastUpdated>
+    <lastUpdated>20160612062423</lastUpdated>
   </versioning>
 </metadata>
