@@ -3,7 +3,7 @@ A helper library for ORM layer with Spring and JPA. It also provides auto switch
 
 ## Versions
 - Final: `1.0-FINAL`
-- Release: `1.4-SNAPSHOT`
+- Release: `1.5-SNAPSHOT`
 
 # Usage
 ## Maven
