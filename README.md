@@ -41,11 +41,17 @@ compile(group: 'com.consolefire.orm.helper', name: 'orm-helper', version: "${orm
 ```
 
 # Changes in current version
+## 1.5-SNAPSHOT
+* Changed ``GenericJpaDao.identityFieldName`` as ``protected``. In case the client want to use Hibernate mapping
+Xml files, then in the extended DAO class, set ``super.identityFieldName``. This will make ``saveOrUpdate(e)`` to 
+work as expected.
+
 ## 1.4-SNAPSHOT
 * Added constants for Bean Names used in the Configuration.
 * Modified to have java.util.Properties as  JPA Properties.
 * Added bean to scan Hibernate/ORM mapping files.
 
+  
 
 # Sample using Maven and Mysql
 Complete example is available [here](https://github.com/Consolefire/sample-projects/tree/master/orm-jpa-sample "orm-jpa-sample").

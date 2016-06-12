@@ -40,7 +40,7 @@ public abstract class GenericJpaDao<E, I extends Serializable> implements Generi
 
     private static Logger logger = LoggerFactory.getLogger(GenericJpaDao.class);
 
-    private String identityFieldName;
+    protected String identityFieldName;
     private Class<E> entityType;
 
     @Getter
