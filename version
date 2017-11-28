@@ -1,0 +1,79 @@
+#!/usr/bin/env sh
+
+##############################################################################
+##
+##  Set parent version
+##
+##############################################################################
+
+SNAPSHOT="SNAPSHOT"
+RELEASE="RELEASE"
+
+set_version()
+{
+	VERSION=$1
+
+	if [ -z "$VERSION" ] ; then
+		echo "No version provided"
+		exit 1;
+	fi
+
+	echo "Setting version: [ $VERSION ]"
+
+	echo $VERSION > version.dat
+
+	mvn versions:set -DnewVersion=$VERSION
+	mvn versions:commit
+}
+
+ACTION=$1
+RELEASE_TYPE=$2
+
+if [ -z "$ACTION" ] ; then
+	echo "No action provided..."
+	exit 1;
+fi
+
+
+if [ -z "$RELEASE_TYPE" ] ; then
+	echo "No release type provided, setting to SNAPSHOT"
+	RELEASE_TYPE=$SNAPSHOT
+fi
+
+echo "Changing [ $ACTION ] version with release type: [ $RELEASE_TYPE ]"
+
+CURRENT_VERSION=`cat version.dat`
+echo "Current version: $CURRENT_VERSION"
+IFS='-' read -ra PARTS <<< "$CURRENT_VERSION"
+IFS='.' read -ra V_PARTS <<< "${PARTS[0]}"
+CUR_MAJOR=${V_PARTS[0]}
+echo "Current major version: ${CUR_MAJOR}"
+CUR_MINOR=${V_PARTS[1]}
+echo "Current minor version: ${CUR_MINOR}"
+CUR_PATCH=${V_PARTS[2]}
+echo "Current patch version: ${CUR_PATCH}"
+
+case $ACTION in
+	MAJOR)
+	FINAL_VERSION="`expr $CUR_MAJOR + 1`.$CUR_MINOR.$CUR_PATCH-$RELEASE_TYPE"
+	set_version $FINAL_VERSION
+	;;
+	MINOR)
+	FINAL_VERSION="$CUR_MAJOR.`expr $CUR_MINOR + 1`.$CUR_PATCH-$RELEASE_TYPE"
+	set_version $FINAL_VERSION
+	;;
+	PATCH)
+	FINAL_VERSION="$CUR_MAJOR.$CUR_MINOR.`expr $CUR_PATCH + 1`-$RELEASE_TYPE"
+	set_version $FINAL_VERSION
+	;;
+	REFRESH)
+	set_version $CURRENT_VERSION
+	;;
+	*)
+	echo "Need action { MAJOR | MINOR | PATCH | REFRESH }"
+	exit 1;
+esac
+
+
+
+
