@@ -1,6 +1,0 @@
-com/consolefire/orm/mongo/EmployeeDocumentRepository.class
-com/consolefire/orm/mongo/MongoEntityManager.class
-com/consolefire/orm/mongo/EmployeeDocumentRepositoryImpl.class
-com/consolefire/orm/mongo/MongoPersistenceContext.class
-com/consolefire/orm/mongo/EmployeeDaoTest.class
-com/consolefire/orm/mongo/Employee.class

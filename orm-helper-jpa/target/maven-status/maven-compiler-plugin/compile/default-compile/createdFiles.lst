@@ -1,7 +1,0 @@
-com/consolefire/orm/jpa/helper/MasterSlaveTransactionInterceptor.class
-com/consolefire/orm/jpa/entity/Auditable.class
-com/consolefire/orm/jpa/entity/AuditableEntityListener.class
-com/consolefire/orm/jpa/config/OrmHelperPersistenceConfig$BeanConstants.class
-com/consolefire/orm/jpa/config/OrmHelperPersistenceConfig.class
-com/consolefire/orm/jpa/helper/GenericJpaDao.class
-com/consolefire/orm/jpa/helper/MasterSlaveRoutingDataSource.class

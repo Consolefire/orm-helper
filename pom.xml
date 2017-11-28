@@ -15,7 +15,7 @@
 		<jdk.version>1.8</jdk.version>
 		<spring.framework.version>4.2.5.RELEASE</spring.framework.version>
 		<slf4j.version>1.7.21</slf4j.version>
-		
+
 		<MONGO_JAVA_DRIVER_VERSION>3.5.0</MONGO_JAVA_DRIVER_VERSION>
 
 		<!-- Github Properties -->
@@ -115,16 +115,16 @@
 				<artifactId>site-maven-plugin</artifactId>
 				<version>0.12</version>
 				<configuration>
-					<message>Maven artifacts for ${project.version}</message>  <!-- git commit message -->
-					<noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
-					<outputDirectory>${project.build.directory}/mvn-repo
-					</outputDirectory> <!-- matches distribution management repository url above -->
-					<branch>refs/heads/mvn-repo</branch>                       <!-- remote branch name -->
+					<message>Maven artifacts for ${project.version}</message>  	<!-- git commit message -->
+					<noJekyll>true</noJekyll>                                  	<!-- disable webpage processing -->
+					<outputDirectory>${project.build.directory}/mvn-repo-v2
+					</outputDirectory> 											<!-- matches distribution management repository url above -->
+					<branch>refs/heads/mvn-repo-v2</branch>           			<!-- remote branch name -->
 					<includes>
 						<include>**/*</include>
 					</includes>
-					<repositoryName>orm-helper</repositoryName>      <!-- github repo name -->
-					<repositoryOwner>Consolefire</repositoryOwner>    <!-- github username -->
+					<repositoryName>orm-helper</repositoryName>      				<!-- github repo name -->
+					<repositoryOwner>Consolefire</repositoryOwner>    			<!-- github username -->
 					<merge>true</merge>
 				</configuration>
 				<executions>
@@ -140,7 +140,7 @@
 				<artifactId>maven-deploy-plugin</artifactId>
 				<version>2.8.1</version>
 				<configuration>
-					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo
+					<altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo-v2
 					</altDeploymentRepository>
 				</configuration>
 			</plugin>

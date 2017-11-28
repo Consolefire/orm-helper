@@ -5,7 +5,12 @@ A helper library for ORM layer with Spring and JPA. It also provides auto switch
 - Final: `1.0-FINAL`
 - Release: `1.5-SNAPSHOT`
 
+### Development Versions
+- Working on: `2.1.x-RELEASE` (Will be available soon...)
+
 # Usage
+### Till version `1.5-SNAPSHOT` or < 
+
 ## Maven
 - Maven repository entry in pom.xml
 ```xml
@@ -40,7 +45,62 @@ maven { url "https://raw.github.com/Consolefire/orm-helper/mvn-repo" }
 compile(group: 'com.consolefire.orm.helper', name: 'orm-helper', version: "${orm.helper.version}")
 ```
 
+### For version `2.x.x-RELEASE` or >
+## Maven
+- Maven repository entry in pom.xml
+```xml
+<repositories>
+    <repository>
+        <id>orm-helper-mvn-repo</id>
+        <url>https://raw.github.com/Consolefire/orm-helper/mvn-repo-v2/</url>
+        <!-- Optional: to always check the repo to refresh jar --> 
+        <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+        </snapshots>
+    </repository>
+</repositories>
+```
+- Maven dependency for JPA
+```xml
+<dependency>
+    <groupId>com.consolefire.orm.helper</groupId>
+    <artifactId>orm-helper-jpa</artifactId>
+    <version>${orm.helper.version}</version>
+</dependency>
+```
+- Maven dependency for MONGO
+```xml
+<dependency>
+    <groupId>com.consolefire.orm.helper</groupId>
+    <artifactId>orm-helper-mongo</artifactId>
+    <version>${orm.helper.version}</version>
+</dependency>
+```
+
+## Gradle
+- Add repository url like 
+```
+maven { url "https://raw.github.com/Consolefire/orm-helper/mvn-repo-v2" }
+```
+- Dependency for JPA 
+```
+compile(group: 'com.consolefire.orm.helper', name: 'orm-helper-jpa', version: "${orm.helper.version}")
+```
+- Dependency for MONGO 
+```
+compile(group: 'com.consolefire.orm.helper', name: 'orm-helper-mongo', version: "${orm.helper.version}")
+```
+
+
+
 # Changes in current version
+
+## 2.0.X-SNAPSHOT
+* Working on mongo support for generic DAO
+* Divided into multiple modules
+* Added new repository URL for backword compatibility
+
 ## 1.5-SNAPSHOT
 * Changed ``GenericJpaDao.identityFieldName`` as ``protected``. In case the client want to use Hibernate mapping
 Xml files, then in the extended DAO class, set ``super.identityFieldName``. This will make ``saveOrUpdate(e)`` to 
