@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.consolefire.orm.helper</groupId>
+  <artifactId>orm-helper-mongo</artifactId>
+  <versioning>
+    <versions>
+      <version>2.0.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20171128142412</lastUpdated>
+  </versioning>
+</metadata>
