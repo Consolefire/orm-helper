@@ -1,0 +1,5 @@
+com/consolefire/orm/mongo/helper/DocumentWrapper.class
+com/consolefire/orm/mongo/helper/GenericDocumentRepository.class
+com/consolefire/orm/mongo/WrappedDocumentRepository.class
+com/consolefire/orm/mongo/helper/GenericDocumentWrapperDao.class
+com/consolefire/orm/mongo/WrappableDocument.class
