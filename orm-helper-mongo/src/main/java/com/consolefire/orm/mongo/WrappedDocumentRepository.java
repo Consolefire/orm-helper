@@ -2,11 +2,11 @@ package com.consolefire.orm.mongo;
 
 import java.io.Serializable;
 
-import com.consolefire.orm.common.GenericDao;
+import org.springframework.data.repository.CrudRepository;
 
-public interface WrappedDocumentRepository<E, W extends WrappableDocument<E>, I extends Serializable>
-        extends GenericDao<E, I> {
+public interface WrappedDocumentRepository<W extends WrappableDocument<?>, I extends Serializable>
+        extends CrudRepository<W, I> {
 
-    
+
 
 }

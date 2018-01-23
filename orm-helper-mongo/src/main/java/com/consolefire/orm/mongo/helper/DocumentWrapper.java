@@ -1,21 +1,22 @@
 package com.consolefire.orm.mongo.helper;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 
 import org.bson.Document;
 
 import com.consolefire.orm.mongo.WrappableDocument;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DocumentWrapper<T> implements WrappableDocument<T> {
+public final class DocumentWrapper<T> implements WrappableDocument<T> {
 
-    private static final long serialVersionUID = 8407284276845560386L;
     private static volatile boolean wrapped;
+    private Document wrappedDocument;
+    
     private final T entity;
     private final Class<T> targetEntity;
-    private Document wrappedDocument;
+    
 
     @SuppressWarnings("unchecked")
     public DocumentWrapper(T entity) {
@@ -32,7 +33,7 @@ public class DocumentWrapper<T> implements WrappableDocument<T> {
     }
 
     public T unwrap() {
-        return null;
+        return entity;
     }
 
     @Override
@@ -40,7 +41,11 @@ public class DocumentWrapper<T> implements WrappableDocument<T> {
         if (!wrapped) {
             synchronized (this) {
                 if (!wrapped) {
-                    wrappedDocument = doWrap();
+                    try {
+                        wrappedDocument = doWrap();
+                    } catch (JsonProcessingException jsonParseException) {
+                        throw new UnsupportedOperationException(jsonParseException);
+                    }
                     wrapped = true;
                 }
             }
@@ -48,10 +53,9 @@ public class DocumentWrapper<T> implements WrappableDocument<T> {
         return wrappedDocument;
     }
 
-    private Document doWrap() {
-        Document document = new Document();
-        
-        return document;
+    private Document doWrap() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return Document.parse(mapper.writeValueAsString(entity));
     }
 
 
